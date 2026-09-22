@@ -41,9 +41,7 @@ function toggleChat() {
     chatBox.style.display = "flex";
 
     setTimeout(() => {
-
       userInput.focus();
-
     }, 100);
 
   }
@@ -91,18 +89,13 @@ function getSessionId() {
 // ADD MESSAGE TO CHAT
 // =====================================================
 
-function addMessage(
-  text,
-  type
-) {
+function addMessage(text, type) {
 
   const message =
     document.createElement("div");
 
 
-  message.classList.add(
-    "message"
-  );
+  message.classList.add("message");
 
 
   if (type === "user") {
@@ -124,9 +117,7 @@ function addMessage(
     formatMessage(text);
 
 
-  messages.appendChild(
-    message
-  );
+  messages.appendChild(message);
 
 
   messages.scrollTop =
@@ -145,19 +136,19 @@ function addMessage(
 function formatMessage(text) {
 
   if (!text) {
-
     return "";
-
   }
 
 
   return String(text)
 
+    // Convert **text** into bold
     .replace(
       /\*\*(.*?)\*\*/g,
       "<strong>$1</strong>"
     )
 
+    // Convert new lines to <br>
     .replace(
       /\n/g,
       "<br>"
@@ -179,26 +170,21 @@ function showTyping() {
   typing.className =
     "message bot-message";
 
+
   typing.id =
     "typingIndicator";
 
 
   typing.innerHTML = `
-
     <div class="typing">
-
       <span></span>
       <span></span>
       <span></span>
-
     </div>
-
   `;
 
 
-  messages.appendChild(
-    typing
-  );
+  messages.appendChild(typing);
 
 
   messages.scrollTop =
@@ -220,9 +206,7 @@ function removeTyping() {
 
 
   if (typing) {
-
     typing.remove();
-
   }
 
 }
@@ -239,16 +223,12 @@ async function sendMessage() {
 
 
   // Don't send empty messages
-
   if (!message) {
-
     return;
-
   }
 
 
   // Display user's message
-
   addMessage(
     message,
     "user"
@@ -256,24 +236,37 @@ async function sendMessage() {
 
 
   // Clear input
-
   userInput.value = "";
 
 
   // Show typing
-
   showTyping();
 
 
   try {
 
-    // Get customer session
+    // =================================================
+    // GET CUSTOMER SESSION
+    // =================================================
 
     const sessionId =
       getSessionId();
 
 
-    // Send message to n8n
+    // =================================================
+    // SEND MESSAGE TO N8N
+    // =================================================
+
+    console.log(
+      "Sending message to n8n:",
+      message
+    );
+
+    console.log(
+      "Session ID:",
+      sessionId
+    );
+
 
     const response =
       await fetch(
@@ -283,10 +276,8 @@ async function sendMessage() {
           method: "POST",
 
           headers: {
-
             "Content-Type":
               "application/json"
-
           },
 
           body:
@@ -307,7 +298,9 @@ async function sendMessage() {
       );
 
 
-    // Check HTTP status
+    // =================================================
+    // CHECK HTTP STATUS
+    // =================================================
 
     if (!response.ok) {
 
@@ -319,7 +312,9 @@ async function sendMessage() {
     }
 
 
-    // Read response
+    // =================================================
+    // READ N8N RESPONSE
+    // =================================================
 
     const data =
       await response.json();
@@ -332,11 +327,12 @@ async function sendMessage() {
 
 
     // Remove typing
-
     removeTyping();
 
 
-    // Get AI response
+    // =================================================
+    // GET AI RESPONSE
+    // =================================================
 
     const aiReply =
       data.output ||
@@ -359,6 +355,7 @@ async function sendMessage() {
         "bot"
       );
 
+
       console.warn(
         "Unexpected n8n response:",
         data
@@ -369,6 +366,10 @@ async function sendMessage() {
 
   } catch (error) {
 
+    // =================================================
+    // ERROR HANDLING
+    // =================================================
+
     console.error(
       "Chatbot Error:",
       error
@@ -376,18 +377,13 @@ async function sendMessage() {
 
 
     // Remove typing
-
     removeTyping();
 
 
     // Show error
-
     addMessage(
-
       "⚠️ I'm having trouble connecting to the restaurant assistant. Please try again.",
-
       "bot"
-
     );
 
   }
