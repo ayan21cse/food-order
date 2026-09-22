@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Mriganka Food Zone</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+
+  <style>
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: "Poppins", sans-serif;
+      background: #fffaf5;
+      color: #222;
+    }
+
+    /* =========================
+       HEADER
+    ========================= */
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+
+      background: #8b0000;
+      color: white;
+
+      padding: 18px 7%;
+
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    nav {
+      display: flex;
+      gap: 25px;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    /* =========================
+       HERO
+    ========================= */
+
+    .hero {
+      min-height: 520px;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      text-align: center;
+
+      padding: 50px 20px;
+
+      background:
+        linear-gradient(
+          rgba(139, 0, 0, 0.75),
+          rgba(139, 0, 0, 0.75)
+        ),
+        url("https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1600&q=80");
+
+      background-size: cover;
+      background-position: center;
+
+      color: white;
+    }
+
+    .hero-content {
+      max-width: 750px;
+    }
+
+    .hero h1 {
+      font-size: clamp(38px, 7vw, 70px);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 20px;
+    }
+
+    .hero p {
+      font-size: 18px;
+      opacity: 0.95;
+      margin-bottom: 30px;
+    }
+
+    .hero-btn {
+      display: inline-block;
+
+      padding: 14px 28px;
+
+      background: white;
+      color: #8b0000;
+
+      border-radius: 30px;
+
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    /* =========================
+       MENU
+    ========================= */
+
+    .menu {
+      padding: 70px 7%;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 45px;
+    }
+
+    .section-title h2 {
+      font-size: 38px;
+      color: #8b0000;
+      margin-bottom: 10px;
+    }
+
+    .section-title p {
+      color: #777;
+    }
+
+    .menu-grid {
+      display: grid;
+
+      grid-template-columns:
+        repeat(auto-fit, minmax(230px, 1fr));
+
+      gap: 25px;
+    }
+
+    .food-card {
+      background: white;
+
+      border-radius: 18px;
+
+      overflow: hidden;
+
+      box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.08);
+
+      transition: 0.3s;
+    }
+
+    .food-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .food-image {
+      width: 100%;
+      height: 190px;
+
+      object-fit: cover;
+    }
+
+    .food-info {
+      padding: 20px;
+    }
+
+    .food-info h3 {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+
+    .food-info p {
+      color: #777;
+      font-size: 14px;
+      margin-bottom: 15px;
+    }
+
+    .price {
+      color: #8b0000;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    /* =========================
+       ABOUT
+    ========================= */
+
+    .about {
+      padding: 70px 7%;
+      background: #fff0e3;
+      text-align: center;
+    }
+
+    .about h2 {
+      color: #8b0000;
+      font-size: 35px;
+      margin-bottom: 15px;
+    }
+
+    .about p {
+      max-width: 750px;
+      margin: auto;
+      color: #666;
+      line-height: 1.8;
+    }
+
+    /* =========================
+       FOOTER
+    ========================= */
+
+    footer {
+      background: #240000;
+      color: white;
+
+      text-align: center;
+
+      padding: 30px 20px;
+    }
+
+    footer p {
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+
+    /* =====================================
+       CHAT BUTTON
+    ===================================== */
+
+    .chat-button {
+
+      position: fixed;
+
+      right: 25px;
+      bottom: 25px;
+
+      width: 62px;
+      height: 62px;
+
+      border-radius: 50%;
+
+      border: none;
+
+      background: #8b0000;
+      color: white;
+
+      font-size: 26px;
+
+      cursor: pointer;
+
+      box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.25);
+
+      z-index: 999;
+    }
+
+
+    /* =====================================
+       CHAT WINDOW
+    ===================================== */
+
+    .chat-box {
+
+      position: fixed;
+
+      right: 25px;
+      bottom: 100px;
+
+      width: 370px;
+      height: 540px;
+
+      background: white;
+
+      border-radius: 20px;
+
+      overflow: hidden;
+
+      box-shadow:
+        0 15px 50px rgba(0, 0, 0, 0.25);
+
+      display: none;
+
+      flex-direction: column;
+
+      z-index: 1000;
+    }
+
+
+    /* =====================================
+       CHAT HEADER
+    ===================================== */
+
+    .chat-header {
+
+      background: #8b0000;
+      color: white;
+
+      padding: 18px;
+
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chat-header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .bot-icon {
+
+      width: 38px;
+      height: 38px;
+
+      background: white;
+      color: #8b0000;
+
+      border-radius: 50%;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      font-size: 20px;
+    }
+
+    .chat-title {
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    .chat-status {
+      font-size: 11px;
+      opacity: 0.85;
+    }
+
+    .close-chat {
+
+      background: transparent;
+      border: none;
+
+      color: white;
+
+      font-size: 22px;
+
+      cursor: pointer;
+    }
+
+
+    /* =====================================
+       MESSAGES
+    ===================================== */
+
+    .chat-messages {
+
+      flex: 1;
+
+      padding: 18px;
+
+      overflow-y: auto;
+
+      background: #fffaf7;
+    }
+
+    .message {
+
+      max-width: 82%;
+
+      padding: 11px 14px;
+
+      margin-bottom: 12px;
+
+      border-radius: 15px;
+
+      font-size: 14px;
+
+      line-height: 1.5;
+
+      word-wrap: break-word;
+    }
+
+    .bot-message {
+
+      background: #eeeeee;
+
+      color: #222;
+
+      border-bottom-left-radius: 4px;
+    }
+
+    .user-message {
+
+      background: #8b0000;
+
+      color: white;
+
+      margin-left: auto;
+
+      border-bottom-right-radius: 4px;
+    }
+
+    .typing {
+
+      display: inline-flex;
+
+      gap: 4px;
+
+      align-items: center;
+    }
+
+    .typing span {
+
+      width: 6px;
+      height: 6px;
+
+      background: #777;
+
+      border-radius: 50%;
+
+      animation: blink 1.2s infinite;
+    }
+
+    .typing span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .typing span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes blink {
+
+      0%, 60%, 100% {
+        opacity: 0.3;
+      }
+
+      30% {
+        opacity: 1;
+      }
+
+    }
+
+
+    /* =====================================
+       CHAT INPUT
+    ===================================== */
+
+    .chat-input-area {
+
+      display: flex;
+
+      border-top: 1px solid #ddd;
+
+      background: white;
+    }
+
+    .chat-input {
+
+      flex: 1;
+
+      border: none;
+
+      outline: none;
+
+      padding: 15px;
+
+      font-size: 14px;
+    }
+
+    .send-button {
+
+      border: none;
+
+      background: #8b0000;
+
+      color: white;
+
+      padding: 0 20px;
+
+      cursor: pointer;
+
+      font-weight: 600;
+    }
+
+    .send-button:hover {
+      background: #6e0000;
+    }
+
+
+    /* =====================================
+       MOBILE
+    ===================================== */
+
+    @media (max-width: 600px) {
+
+      header {
+        padding: 15px 5%;
+      }
+
+      nav {
+        display: none;
+      }
+
+      .hero {
+        min-height: 450px;
+      }
+
+      .menu {
+        padding: 50px 5%;
+      }
+
+      .chat-box {
+
+        right: 10px;
+        bottom: 90px;
+
+        width: calc(100% - 20px);
+
+        height: 520px;
+      }
+
+      .chat-button {
+
+        right: 18px;
+        bottom: 18px;
+      }
+
+    }
+
+  </style>
+</head>
+
+
+<body>
+
+
+  <!-- =========================
+       HEADER
+  ========================= -->
+
+  <header>
+
+    <div class="logo">
+      🍴 Mriganka Food Zone
+    </div>
+
+    <nav>
+
+      <a href="#home">Home</a>
+
+      <a href="#menu">Menu</a>
+
+      <a href="#about">About</a>
+
+    </nav>
+
+  </header>
+
+
+
+  <!-- =========================
+       HERO
+  ========================= -->
+
+  <section class="hero" id="home">
+
+    <div class="hero-content">
+
+      <h1>
+        Delicious Food.<br>
+        Made With Love.
+      </h1>
+
+      <p>
+        Welcome to Mriganka Food Zone —
+        your destination for delicious,
+        fresh and satisfying meals.
+      </p>
+
+      <a href="#menu" class="hero-btn">
+        Explore Menu
+      </a>
+
+    </div>
+
+  </section>
+
+
+
+  <!-- =========================
+       MENU
+  ========================= -->
+
+  <section class="menu" id="menu">
+
+    <div class="section-title">
+
+      <h2>Our Menu</h2>
+
+      <p>
+        Freshly prepared favourites from
+        Mriganka Food Zone.
+      </p>
+
+    </div>
+
+
+    <div class="menu-grid">
+
+
+      <!-- Chicken Thali -->
+
+      <div class="food-card">
+
+        <img
+          class="food-image"
+          src="https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=800&q=80"
+          alt="Chicken Thali"
+        >
+
+        <div class="food-info">
+
+          <h3>🍗 Chicken Thali</h3>
+
+          <p>
+            Chicken curry, rice, dal,
+            vegetables and salad.
+          </p>
+
+          <div class="price">
+            ₹180
+          </div>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- Veg Thali -->
+
+      <div class="food-card">
+
+        <img
+          class="food-image"
+          src="https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=800&q=80"
+          alt="Veg Thali"
+        >
+
+        <div class="food-info">
+
+          <h3>🥬 Veg Thali</h3>
+
+          <p>
+            Rice, dal, vegetables,
+            curry and fresh salad.
+          </p>
+
+          <div class="price">
+            ₹120
+          </div>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- Mutton Thali -->
+
+      <div class="food-card">
+
+        <img
+          class="food-image"
+          src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80"
+          alt="Mutton Thali"
+        >
+
+        <div class="food-info">
+
+          <h3>🐐 Mutton Thali</h3>
+
+          <p>
+            Delicious mutton curry
+            served with rice and sides.
+          </p>
+
+          <div class="price">
+            ₹250
+          </div>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- Chicken Biryani -->
+
+      <div class="food-card">
+
+        <img
+          class="food-image"
+          src="https://images.unsplash.com/photo-1563379091339-03246963d96c?auto=format&fit=crop&w=800&q=80"
+          alt="Chicken Biryani"
+        >
+
+        <div class="food-info">
+
+          <h3>🍚 Chicken Biryani</h3>
+
+          <p>
+            Aromatic basmati rice
+            with delicious chicken.
+          </p>
+
+          <div class="price">
+            ₹200
+          </div>
+
+        </div>
+
+      </div>
+
+
+    </div>
+
+  </section>
+
+
+
+  <!-- =========================
+       ABOUT
+  ========================= -->
+
+  <section class="about" id="about">
+
+    <h2>About Mriganka Food Zone</h2>
+
+    <p>
+
+      At Mriganka Food Zone, we believe good food
+      brings people together. Our meals are prepared
+      with fresh ingredients and served with care.
+
+      Have a question about our menu or want to place
+      an order? Just ask our AI assistant.
+
+    </p>
+
+  </section>
+
+
+
+  <!-- =========================
+       FOOTER
+  ========================= -->
+
+  <footer>
+
+    <h3>
+      🍴 Mriganka Food Zone
+    </h3>
+
+    <br>
+
+    <p>
+      © 2026 Mriganka Food Zone.
+      All rights reserved.
+    </p>
+
+  </footer>
+
+
+
+  <!-- =========================
+       CHAT BUTTON
+  ========================= -->
+
+  <button
+    class="chat-button"
+    id="chatButton"
+    onclick="toggleChat()"
+    aria-label="Open AI Assistant"
+  >
+    💬
+  </button>
+
+
+
+  <!-- =========================
+       CHAT BOX
+  ========================= -->
+
+  <div
+    class="chat-box"
+    id="chatBox"
+  >
+
+
+    <!-- Chat Header -->
+
+    <div class="chat-header">
+
+      <div class="chat-header-left">
+
+        <div class="bot-icon">
+          🤖
+        </div>
+
+        <div>
+
+          <div class="chat-title">
+            Mriganka Food Assistant
+          </div>
+
+          <div class="chat-status">
+            ● Online
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <button
+        class="close-chat"
+        onclick="toggleChat()"
+      >
+        ×
+      </button>
+
+    </div>
+
+
+
+    <!-- Messages -->
+
+    <div
+      class="chat-messages"
+      id="messages"
+    >
+
+      <div class="message bot-message">
+
+        👋 Hi! Welcome to
+        <strong>Mriganka Food Zone</strong>.
+
+        <br><br>
+
+        I can help you with our menu,
+        availability and orders.
+
+        <br><br>
+
+        What would you like to know?
+
+      </div>
+
+    </div>
+
+
+
+    <!-- Input -->
+
+    <div class="chat-input-area">
+
+      <input
+        type="text"
+        id="userInput"
+        class="chat-input"
+        placeholder="Ask me anything..."
+        autocomplete="off"
+      >
+
+      <button
+        class="send-button"
+        onclick="sendMessage()"
+      >
+        Send
+      </button>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- =========================
+       JAVASCRIPT
+  ========================= -->
+
+  <script src="brain.js"></script>
+
+</body>
+
+</html>
