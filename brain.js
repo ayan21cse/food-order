@@ -1,11 +1,11 @@
 // =====================================================
 // MRIGANKA FOOD ZONE
-// AI CHATBOT - N8N CONNECTION
+// AI CHATBOT - N8N PRODUCTION CONNECTION
 // =====================================================
 
 
 // =====================================================
-// N8N CHAT TRIGGER URL
+// N8N PRODUCTION CHAT URL
 // =====================================================
 
 const N8N_CHAT_URL =
@@ -19,6 +19,21 @@ const N8N_CHAT_URL =
 const chatBox = document.getElementById("chatBox");
 const messages = document.getElementById("messages");
 const userInput = document.getElementById("userInput");
+
+
+// =====================================================
+// CREATE NEW SESSION
+// NO localStorage
+// NO sessionStorage
+// =====================================================
+
+const sessionId =
+  "customer_" +
+  Date.now() +
+  "_" +
+  Math.random().toString(36).substring(2, 10);
+
+console.log("NEW CHAT SESSION:", sessionId);
 
 
 // =====================================================
@@ -45,31 +60,7 @@ function toggleChat() {
 
 
 // =====================================================
-// CREATE NEW SESSION ID
-// =====================================================
-// IMPORTANT:
-// No localStorage.
-// No sessionStorage.
-// Browser will NOT save the session.
-//
-// A completely new session ID is created whenever
-// the website page is loaded.
-// =====================================================
-
-const sessionId =
-  "customer_" +
-  Date.now() +
-  "_" +
-  Math.random()
-    .toString(36)
-    .substring(2, 10);
-
-
-console.log("New chat session:", sessionId);
-
-
-// =====================================================
-// ADD MESSAGE TO CHAT
+// ADD MESSAGE
 // =====================================================
 
 function addMessage(text, type) {
@@ -102,26 +93,25 @@ function addMessage(text, type) {
 
 
 // =====================================================
-// FORMAT AI MESSAGE
+// FORMAT MESSAGE
 // =====================================================
 
 function formatMessage(text) {
 
-  if (!text) {
+  if (text === null || text === undefined) {
     return "";
   }
 
   return String(text)
-
     .replace(
       /\*\*(.*?)\*\*/g,
       "<strong>$1</strong>"
     )
-
     .replace(
       /\n/g,
       "<br>"
     );
+
 }
 
 
@@ -130,6 +120,8 @@ function formatMessage(text) {
 // =====================================================
 
 function showTyping() {
+
+  removeTyping();
 
   const typing =
     document.createElement("div");
@@ -156,7 +148,7 @@ function showTyping() {
 
 
 // =====================================================
-// REMOVE TYPING INDICATOR
+// REMOVE TYPING
 // =====================================================
 
 function removeTyping() {
@@ -169,6 +161,133 @@ function removeTyping() {
   if (typing) {
     typing.remove();
   }
+
+}
+
+
+// =====================================================
+// EXTRACT AI RESPONSE
+// =====================================================
+
+function extractAIResponse(data) {
+
+  console.log(
+    "RAW N8N DATA:",
+    data
+  );
+
+
+  // -----------------------------------------------
+  // Direct string
+  // -----------------------------------------------
+
+  if (typeof data === "string") {
+
+    return data;
+
+  }
+
+
+  // -----------------------------------------------
+  // Array response
+  // -----------------------------------------------
+
+  if (Array.isArray(data)) {
+
+    for (const item of data) {
+
+      if (!item) continue;
+
+      if (typeof item === "string") {
+        return item;
+      }
+
+      if (item.output) {
+        return item.output;
+      }
+
+      if (item.reply) {
+        return item.reply;
+      }
+
+      if (item.text) {
+        return item.text;
+      }
+
+      if (item.message) {
+
+        if (typeof item.message === "string") {
+          return item.message;
+        }
+
+        if (item.message.content) {
+          return item.message.content;
+        }
+
+      }
+
+    }
+
+  }
+
+
+  // -----------------------------------------------
+  // Standard n8n response
+  // -----------------------------------------------
+
+  if (data.output) {
+    return data.output;
+  }
+
+  if (data.reply) {
+    return data.reply;
+  }
+
+  if (data.text) {
+    return data.text;
+  }
+
+
+  // -----------------------------------------------
+  // message object/string
+  // -----------------------------------------------
+
+  if (data.message) {
+
+    if (typeof data.message === "string") {
+
+      return data.message;
+
+    }
+
+    if (data.message.content) {
+
+      return data.message.content;
+
+    }
+
+  }
+
+
+  // -----------------------------------------------
+  // response field
+  // -----------------------------------------------
+
+  if (data.response) {
+
+    if (typeof data.response === "string") {
+      return data.response;
+    }
+
+    if (data.response.output) {
+      return data.response.output;
+    }
+
+  }
+
+
+  return null;
+
 }
 
 
@@ -181,13 +300,14 @@ async function sendMessage() {
   const message =
     userInput.value.trim();
 
-  // Don't send empty messages
+
+  // Don't send empty message
   if (!message) {
     return;
   }
 
 
-  // Display user's message
+  // Show user message
   addMessage(
     message,
     "user"
@@ -204,20 +324,33 @@ async function sendMessage() {
 
   try {
 
-    // =================================================
-    // SEND MESSAGE TO N8N
-    // =================================================
+    console.log(
+      "================================="
+    );
 
     console.log(
-      "Sending message:",
+      "SENDING MESSAGE TO N8N"
+    );
+
+    console.log(
+      "Message:",
       message
     );
 
     console.log(
-      "Session ID:",
+      "Session:",
       sessionId
     );
 
+    console.log(
+      "URL:",
+      N8N_CHAT_URL
+    );
+
+
+    // =================================================
+    // SEND REQUEST
+    // =================================================
 
     const response =
       await fetch(
@@ -247,48 +380,109 @@ async function sendMessage() {
       );
 
 
+    console.log(
+      "HTTP STATUS:",
+      response.status
+    );
+
+    console.log(
+      "HTTP OK:",
+      response.ok
+    );
+
+
     // =================================================
-    // CHECK HTTP STATUS
+    // READ RESPONSE AS TEXT FIRST
+    // =================================================
+
+    const rawResponse =
+      await response.text();
+
+
+    console.log(
+      "RAW N8N RESPONSE:",
+      rawResponse
+    );
+
+
+    // =================================================
+    // HTTP ERROR
     // =================================================
 
     if (!response.ok) {
 
       throw new Error(
-        "HTTP Error: " +
-        response.status
+        "n8n HTTP " +
+        response.status +
+        ": " +
+        rawResponse
       );
 
     }
 
 
     // =================================================
-    // READ N8N RESPONSE
+    // EMPTY RESPONSE
     // =================================================
 
-    const data =
-      await response.json();
+    if (!rawResponse.trim()) {
+
+      removeTyping();
+
+      addMessage(
+        "⚠️ n8n received the message but returned an empty response.",
+        "bot"
+      );
+
+      console.error(
+        "EMPTY RESPONSE FROM N8N"
+      );
+
+      return;
+
+    }
+
+
+    // =================================================
+    // TRY JSON
+    // =================================================
+
+    let data;
+
+    try {
+
+      data =
+        JSON.parse(rawResponse);
+
+    } catch (jsonError) {
+
+      // n8n returned plain text
+      data =
+        rawResponse;
+
+    }
 
 
     console.log(
-      "n8n response:",
+      "PARSED N8N RESPONSE:",
       data
     );
 
 
-    // Remove typing
+    // =================================================
+    // EXTRACT AI MESSAGE
+    // =================================================
+
+    const aiReply =
+      extractAIResponse(data);
+
+
     removeTyping();
 
 
     // =================================================
-    // GET AI RESPONSE
+    // SHOW AI RESPONSE
     // =================================================
-
-    const aiReply =
-      data.output ||
-      data.reply ||
-      data.text ||
-      data.message;
-
 
     if (aiReply) {
 
@@ -300,33 +494,52 @@ async function sendMessage() {
     } else {
 
       addMessage(
-        "Sorry, I didn't receive a response from the assistant.",
+        "⚠️ n8n responded, but I couldn't find the AI response in the returned data.",
         "bot"
       );
 
-      console.warn(
-        "Unexpected n8n response:",
+      console.error(
+        "UNKNOWN N8N RESPONSE FORMAT:",
         data
       );
 
     }
 
 
-  } catch (error) {
-
-    console.error(
-      "Chatbot Error:",
-      error
+    console.log(
+      "================================="
     );
 
 
-    // Remove typing
+  } catch (error) {
+
     removeTyping();
 
 
-    // Show error
+    console.error(
+      "================================="
+    );
+
+    console.error(
+      "CHATBOT ERROR:"
+    );
+
+    console.error(
+      error
+    );
+
+    console.error(
+      "================================="
+    );
+
+
+    // =================================================
+    // SHOW ACTUAL ERROR
+    // =================================================
+
     addMessage(
-      "⚠️ I'm having trouble connecting to the restaurant assistant. Please try again.",
+      "⚠️ Chat error: " +
+      error.message,
       "bot"
     );
 
