@@ -16,14 +16,9 @@ const N8N_CHAT_URL =
 // GET CHAT ELEMENTS
 // =====================================================
 
-const chatBox =
-  document.getElementById("chatBox");
-
-const messages =
-  document.getElementById("messages");
-
-const userInput =
-  document.getElementById("userInput");
+const chatBox = document.getElementById("chatBox");
+const messages = document.getElementById("messages");
+const userInput = document.getElementById("userInput");
 
 
 // =====================================================
@@ -50,39 +45,27 @@ function toggleChat() {
 
 
 // =====================================================
-// CREATE UNIQUE SESSION ID
+// CREATE NEW SESSION ID
+// =====================================================
+// IMPORTANT:
+// No localStorage.
+// No sessionStorage.
+// Browser will NOT save the session.
+//
+// A completely new session ID is created whenever
+// the website page is loaded.
 // =====================================================
 
-function getSessionId() {
-
-  let sessionId =
-    localStorage.getItem(
-      "mrigankaFoodZoneSession"
-    );
-
-
-  if (!sessionId) {
-
-    sessionId =
-      "customer_" +
-      Date.now() +
-      "_" +
-      Math.random()
-        .toString(36)
-        .substring(2, 10);
+const sessionId =
+  "customer_" +
+  Date.now() +
+  "_" +
+  Math.random()
+    .toString(36)
+    .substring(2, 10);
 
 
-    localStorage.setItem(
-      "mrigankaFoodZoneSession",
-      sessionId
-    );
-
-  }
-
-
-  return sessionId;
-
-}
+console.log("New chat session:", sessionId);
 
 
 // =====================================================
@@ -94,38 +77,27 @@ function addMessage(text, type) {
   const message =
     document.createElement("div");
 
-
   message.classList.add("message");
-
 
   if (type === "user") {
 
-    message.classList.add(
-      "user-message"
-    );
+    message.classList.add("user-message");
 
   } else {
 
-    message.classList.add(
-      "bot-message"
-    );
+    message.classList.add("bot-message");
 
   }
-
 
   message.innerHTML =
     formatMessage(text);
 
-
   messages.appendChild(message);
-
 
   messages.scrollTop =
     messages.scrollHeight;
 
-
   return message;
-
 }
 
 
@@ -139,21 +111,17 @@ function formatMessage(text) {
     return "";
   }
 
-
   return String(text)
 
-    // Convert **text** into bold
     .replace(
       /\*\*(.*?)\*\*/g,
       "<strong>$1</strong>"
     )
 
-    // Convert new lines to <br>
     .replace(
       /\n/g,
       "<br>"
     );
-
 }
 
 
@@ -166,14 +134,11 @@ function showTyping() {
   const typing =
     document.createElement("div");
 
-
   typing.className =
     "message bot-message";
 
-
   typing.id =
     "typingIndicator";
-
 
   typing.innerHTML = `
     <div class="typing">
@@ -183,13 +148,10 @@ function showTyping() {
     </div>
   `;
 
-
   messages.appendChild(typing);
-
 
   messages.scrollTop =
     messages.scrollHeight;
-
 }
 
 
@@ -204,11 +166,9 @@ function removeTyping() {
       "typingIndicator"
     );
 
-
   if (typing) {
     typing.remove();
   }
-
 }
 
 
@@ -220,7 +180,6 @@ async function sendMessage() {
 
   const message =
     userInput.value.trim();
-
 
   // Don't send empty messages
   if (!message) {
@@ -246,19 +205,11 @@ async function sendMessage() {
   try {
 
     // =================================================
-    // GET CUSTOMER SESSION
-    // =================================================
-
-    const sessionId =
-      getSessionId();
-
-
-    // =================================================
     // SEND MESSAGE TO N8N
     // =================================================
 
     console.log(
-      "Sending message to n8n:",
+      "Sending message:",
       message
     );
 
@@ -272,7 +223,6 @@ async function sendMessage() {
       await fetch(
         N8N_CHAT_URL,
         {
-
           method: "POST",
 
           headers: {
@@ -293,7 +243,6 @@ async function sendMessage() {
                 message
 
             })
-
         }
       );
 
@@ -355,7 +304,6 @@ async function sendMessage() {
         "bot"
       );
 
-
       console.warn(
         "Unexpected n8n response:",
         data
@@ -365,10 +313,6 @@ async function sendMessage() {
 
 
   } catch (error) {
-
-    // =================================================
-    // ERROR HANDLING
-    // =================================================
 
     console.error(
       "Chatbot Error:",
